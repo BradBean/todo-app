@@ -1,0 +1,14 @@
+body {
+    background-color: #f8f9fa;
+}
+
+#taskInputSection {
+    margin-bottom: 1em;
+}
+
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: .5em;
+}
