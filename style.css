@@ -1,14 +1,33 @@
 body {
-    background-color: #f8f9fa;
+    background-color: #f0f0f0; 
 }
 
-#taskInputSection {
+#listInputSection, #taskInputSection {
     margin-bottom: 1em;
 }
+
 
 .task-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: .5em;
+    padding: .5em;
+    background-color: #e0e0e0; 
+    border-radius: 5px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.1); 
+}
+
+.task-item:hover {
+    background-color: #d0d0d0; 
+}
+
+button {
+    background-color: #c0c0c0; 
+    color: white;
+    border: none;
+}
+
+button:hover {
+    background-color: #a0a0a0; 
 }
