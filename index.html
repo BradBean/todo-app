@@ -1,31 +1,30 @@
 <!DOCTYPE html>
 <html>
-<head>
-    <title>Todo List App</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
-    <link rel="stylesheet" href="style.css">
-</head>
-<body>
-    <div class="container">
-        <div class="row">
-            <div class="col-sm-4">
-                <div id="listInputSection">
-                    <input type="text" id="newListInput" placeholder="New list..." class="form-control">
-                    <button id="addListButton" class="btn btn-primary">Add List</button>
-                </div>
-                <div id="listSelection"></div>
-            </div>
-            <div class="col-sm-8">
-                <div id="taskInputSection" style="display: none;">
-                    <input type="text" id="newTaskInput" placeholder="New task..." class="form-control">
-                    <button id="addTaskButton" class="btn btn-primary">Add Task</button>
-                </div>
-                <p id="createListMessage">Create a to-do list to get started.</p>
-                <p id="selectListMessage" style="display: none;">Select a to-do list!</p>
-                <div id="taskLists"></div>
-            </div>
+  <head>
+    <link rel="stylesheet" type="text/css" href="style.css">
+  </head>
+  <body>
+    <div id="centeredBox">
+      <div id="leftSide">
+        <h1>To-do Lists</h1>
+        <div class="inputContainer">
+          <input id="listNameInput" type="text" placeholder="Enter list name..." />
+          <button id="addListButton">Add List</button>
         </div>
+        <div id="todoLists"></div>
+      </div>
+      <div id="rightSide">
+        <h1 id="taskHeading">Tasks</h1>
+        <h2 id="message">Make a to-do list before starting.</h2>
+        <div id="taskInputArea" style="display: none;">
+          <div class="inputContainer centeredInput">
+            <input id="taskNameInput" type="text" placeholder="Enter task..." />
+            <button id="addTaskButton">Add Task</button>
+          </div>
+        </div>
+        <div id="tasks"></div>
+      </div>
     </div>
     <script src="app.js"></script>
-</body>
+  </body>
 </html>

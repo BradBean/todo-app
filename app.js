@@ -1,118 +1,120 @@
-window.onload = function() {
-    if(localStorage.getItem("allTasks")) {
-        document.getElementById('taskLists').innerHTML = JSON.parse(localStorage.getItem("allTasks"));
+let listNameInput = document.getElementById('listNameInput');
+let addListButton = document.getElementById('addListButton');
+let todoLists = document.getElementById('todoLists');
+let message = document.getElementById('message');
+let taskInputArea = document.getElementById('taskInputArea');
+let taskNameInput = document.getElementById('taskNameInput');
+let addTaskButton = document.getElementById('addTaskButton');
+let tasks = document.getElementById('tasks');
+
+let data = JSON.parse(localStorage.getItem('todoLists')) || {};
+
+addListButton.addEventListener('click', function() {
+    let listName = listNameInput.value.trim();
+    if (listName === '') { 
+      return; 
     }
-    if(localStorage.getItem("allLists")) {
-        document.getElementById('listSelection').innerHTML = JSON.parse(localStorage.getItem("allLists"));
-    }
+    data[listName] = [];
+    localStorage.setItem('todoLists', JSON.stringify(data));
+    renderTodoLists();
+    listNameInput.value = '';
+  });
+
+function renderTodoLists() {
+  todoLists.innerHTML = '';
+  for (let listName in data) {
+    let listItem = document.createElement('div');
+    listItem.textContent = listName;
+    listItem.classList.add('todoList');
+    todoLists.appendChild(listItem);
+    listItem.addEventListener('click', function() {
+      currentList = listName;
+      message.style.display = 'none';
+      taskInputArea.style.display = 'block';
+      renderTasks(listName);
+    });
+  }
 }
 
-document.getElementById('addListButton').addEventListener('click', function() {
-    const listInput = document.getElementById('newListInput');
-    const newList = listInput.value;
-    listInput.value = '';
-
-    const listDiv = createListElement(newList);
-
-    listSelection.appendChild(listDiv);
-
-    setDisplaySettings();
-
-    const taskList = document.createElement('div');
-    taskList.id = newList + '-tasks';
-    taskList.style.display = 'none';
-
-    document.getElementById('taskLists').appendChild(taskList);
-
-    localStorage.setItem("allTasks", JSON.stringify(document.getElementById('taskLists').innerHTML));
-    localStorage.setItem("allLists", JSON.stringify(document.getElementById('listSelection').innerHTML));
+addTaskButton.addEventListener('click', function() {
+  let newTask = taskNameInput.value;
+  if (currentList && newTask) {
+    data[currentList].push({ task: newTask, completed: false });
+    localStorage.setItem('todoLists', JSON.stringify(data));
+    renderTasks(currentList);
+    taskNameInput.value = '';
+  }
 });
 
-document.getElementById('addTaskButton').addEventListener('click', function() {
-    const taskInput = document.getElementById('newTaskInput');
-    const newTask = taskInput.value;
-    taskInput.value = '';
+function renderTasks(listName) {
+  tasks.innerHTML = '';
+  let currentTasks = data[listName];
+  for (let i = 0; i < currentTasks.length; i++) {
+    let taskItem = document.createElement('div');
+    taskItem.classList.add('task');
 
-    const selectedList = document.querySelector('.list-item.selected').id;
-    const taskList = document.getElementById(selectedList + '-tasks');
-
-    const taskItem = createTaskElement(newTask);
-
-    taskList.appendChild(taskItem);
-
-    localStorage.setItem("allTasks", JSON.stringify(document.getElementById('taskLists').innerHTML));
-});
-
-function createListElement(listId) {
-    const listDiv = document.createElement('div');
-    listDiv.textContent = listId;
-    listDiv.id = listId;
-    listDiv.className = 'list-item';
-    listDiv.onclick = function() {
-        switchList(listId);
-    };
-    return listDiv;
-}
-
-function createTaskElement(task) {
-    const taskItem = document.createElement('div');
-    taskItem.className = 'task-item';
-
-    const taskText = document.createElement('span');
-    taskText.textContent = task;
-
-    const completeButton = createButton('Complete', 'btn-success', function() {
-        taskText.style.textDecoration = 'line-through';
-    });
-
-    const removeButton = createButton('Remove', 'btn-danger', function() {
-        taskItem.style.transition = "opacity 1s ease-out";
-        taskItem.style.opacity = 0;
-        setTimeout(function(){
-            taskItem.remove();
-            localStorage.setItem("allTasks", JSON.stringify(document.getElementById('taskLists').innerHTML));
-        }, 1000);
-    });
-
+    let taskText = document.createElement('p');
+    taskText.textContent = currentTasks[i].task;
     taskItem.appendChild(taskText);
+
+    let completeButton = document.createElement('button');
+    completeButton.textContent = 'Complete';
+    completeButton.classList.add('complete-button'); 
+    completeButton.addEventListener('click', function() {
+      currentTasks[i].completed = !currentTasks[i].completed;
+      localStorage.setItem('todoLists', JSON.stringify(data));
+      renderTasks(listName);
+    });
     taskItem.appendChild(completeButton);
-    taskItem.appendChild(removeButton);
 
-    return taskItem;
-}
+    let deleteButton = document.createElement('button');
+    deleteButton.textContent = 'Delete';
+    deleteButton.classList.add('delete-button'); 
+    deleteButton.addEventListener('click', function() {
+      data[listName].splice(i, 1);
+      localStorage.setItem('todoLists', JSON.stringify(data));
+      renderTasks(listName);
+    });
+    taskItem.appendChild(deleteButton);
 
-function createButton(text, className, onclickFunction) {
-    const button = document.createElement('button');
-    button.textContent = text;
-    button.className = 'btn ' + className;
-    button.onclick = onclickFunction;
-    return button;
-}
+    let editButton = document.createElement('button');
+    editButton.textContent = 'Edit';
+    editButton.classList.add('edit-button'); // Add the class name
+    editButton.addEventListener('click', function() {
+      taskText.remove();
+      completeButton.remove();
+      deleteButton.remove();
+      editButton.remove();
 
-function setDisplaySettings() {
-    document.getElementById('taskInputSection').style.display = 'none';
-    document.getElementById('selectListMessage').style.display = 'block';
-    document.getElementById('createListMessage').style.display = 'none';
-}
+      let editInput = document.createElement('input');
+      editInput.type = 'text';
+      editInput.value = currentTasks[i].task;
+      taskItem.appendChild(editInput);
 
-function switchList(listId) {
-    const taskLists = document.getElementById('taskLists').children;
-    const listItems = document.getElementById('listSelection').children;
+      let saveButton = document.createElement('button');
+      saveButton.textContent = 'Save';
+      saveButton.addEventListener('click', function() {
+        data[listName][i].task = editInput.value;
+        localStorage.setItem('todoLists', JSON.stringify(data));
+        renderTasks(listName);
+      });
+      taskItem.appendChild(saveButton);
 
-    for(let i=0; i<taskLists.length; i++) {
-        taskLists[i].style.display = 'none';
+      let cancelButton = document.createElement('button');
+      cancelButton.textContent = 'Cancel';
+      cancelButton.addEventListener('click', function() {
+        renderTasks(listName);
+      });
+      taskItem.appendChild(cancelButton);
+    });
+    taskItem.appendChild(editButton);
+
+    if (currentTasks[i].completed) {
+      taskText.classList.add('completed');
     }
 
-    document.getElementById(listId + '-tasks').style.display = 'block';
-
-    for(let i=0; i<listItems.length; i++) {
-        if(listItems[i].id === listId) {
-            listItems[i].classList.add('selected');
-        } else {
-            listItems[i].classList.remove('selected');
-        }
-    }
-
-    document.getElementById('taskInputSection').style.display = 'block';
-    document.getElementById('selectListMessage').style.display = 'none';
+    tasks.appendChild(taskItem);
+  }
 }
+
+renderTodoLists();
