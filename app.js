@@ -20,21 +20,33 @@ addListButton.addEventListener('click', function() {
     listNameInput.value = '';
   });
 
-function renderTodoLists() {
-  todoLists.innerHTML = '';
-  for (let listName in data) {
-    let listItem = document.createElement('div');
-    listItem.textContent = listName;
-    listItem.classList.add('todoList');
-    todoLists.appendChild(listItem);
-    listItem.addEventListener('click', function() {
-      currentList = listName;
-      message.style.display = 'none';
-      taskInputArea.style.display = 'block';
-      renderTasks(listName);
-    });
+  function renderTodoLists() {
+    todoLists.innerHTML = '';
+    for (let listName in data) {
+      let listItem = document.createElement('div');
+      listItem.textContent = listName;
+      listItem.classList.add('todoList');
+  
+      let deleteButton = document.createElement('button');
+      deleteButton.textContent = 'Delete';
+      deleteButton.classList.add('delete-button'); 
+      deleteButton.addEventListener('click', function() {
+        delete data[listName];
+        localStorage.setItem('todoLists', JSON.stringify(data));
+        renderTodoLists();
+      });
+      listItem.appendChild(deleteButton);
+  
+      todoLists.appendChild(listItem);
+      listItem.addEventListener('click', function() {
+        currentList = listName;
+        message.style.display = 'none';
+        taskInputArea.style.display = 'block';
+        renderTasks(listName);
+      });
+    }
   }
-}
+  
 
 addTaskButton.addEventListener('click', function() {
   let newTask = taskNameInput.value;
