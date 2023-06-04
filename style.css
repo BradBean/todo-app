@@ -85,9 +85,7 @@ button:hover {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: nowrap; 
 }
-
 
 .todoList:hover {
     background: #eee;
@@ -139,12 +137,8 @@ button:hover {
 .delete-button {
     background: #f44336; 
     color: white;
-  }
+}
 
-  .todoList .delete-button {
+.todoList .delete-button {
     flex-shrink: 0;
-  }
-
-  .todoList {
-
-  }
+}

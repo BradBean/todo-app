@@ -36,7 +36,7 @@ addListButton.addEventListener('click', function() {
         renderTodoLists();
       });
       listItem.appendChild(deleteButton);
-  
+      
       todoLists.appendChild(listItem);
       listItem.addEventListener('click', function() {
         currentList = listName;
